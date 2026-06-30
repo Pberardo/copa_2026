@@ -2,59 +2,40 @@
 const URL_GRUPOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.groups.json';
 const URL_JOGOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
 
-// 🗺️ DICIONÁRIO DE EMOJIS DE BANDEIRAS (Nativos, sem carregar imagens externas!)
+// 🇧🇷 DICIONÁRIO DE BANDEIRAS
 const DICIONARIO_BANDEIRAS = {
-    
-    "mexico": "🇲🇽",
-    "south africa": "🇿🇦",
-    "south korea": "🇰🇷",
-    "czech republic":"🇨🇿",
-    "switzerland": "🇨🇭",
-    "canada": "🇨🇦",
-    "bosnia & herzegovina":"🇧🇦",
-    "qatar": "🇶🇦",
-    "brazil": "🇧🇷",
-    "morocco": "🇲🇦",
-    "scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-    "haiti": "🇭🇹",
-    "united states": "🇺🇸",
-    "usa": "🇺🇸",
-    "australia": "🇦🇺",
-    "paraguay": "🇵🇾",
-    "turkey": "🇹🇷",
-    "curacao": "🇨🇼",
-    "germany": "🇩🇪",
-    "ivory coast": "🇨🇮",
-    "ecuador": "🇪🇨",
-    "netherlands": "🇳🇱",
-    "japan": "🇯🇵",
-    "sweden": "🇸🇪",
-    "tunisia": "🇹🇳",
-    "belgium": "🇧🇪",
-    "egypt": "🇪🇬",
-    "iran": "🇮🇷",
-    "new zealand": "🇳🇿",
-    "spain": "🇪🇸",
-    "cape verde": "🇨🇻",
-    "saudi arabia": "🇸🇦",
-    "uruguay": "🇺🇾",
-    "france": "🇫🇷",
-    "senegal": "🇸🇳",
-    "iraq": "🇮🇶",
-    "norway": "🇳🇴",
-    "algeria": "🇩🇿",
-    "argentina": "🇦🇷",
-    "austria": "🇦🇹",
-    "jordan": "🇯🇴",
-    "portugal": "🇵🇹",
-    "dr congo": "🇨🇩",
-    "uzbekistan": "🇺🇿",
-    "colombia": "🇨🇴",
-    "england": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    "croatia": "🇭🇷",
-    "ghana": "🇬🇭",
-    "panama": "🇵🇦"    
-    
+    "mexico": "🇲🇽", "africa do sul": "🇿🇦", "coreia do sul": "🇰🇷", "republica tcheca": "🇨🇿",
+    "suica": "🇨🇭", "canada": "🇨🇦", "bosnia e herzegovina": "🇧🇦", "bosnia e hezergovina": "🇧🇦",
+    "catar": "🇶🇦", "brasil": "🇧🇷", "marrocos": "🇲🇦", "escocia": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "haiti": "🇭🇹", "estados unidos": "🇺🇸", "australia": "🇦🇺", "paraguai": "🇵🇾",
+    "turquia": "🇹🇷", "alemanha": "🇩🇪", "costa do marfim": "🇨🇮", "equador": "🇪🇨", "holanda": "🇳🇱",
+    "japao": "🇯🇵", "suecia": "🇸🇪", "tunisia": "🇹🇳", "belgica": "🇧🇪", "egito": "🇪🇬",
+    "ira": "🇮🇷", "nova zelandia": "🇳🇿", "espanha": "🇪🇸", "cabo verde": "🇨🇻", "arabia saudita": "🇸🇦",
+    "uruguai": "🇺🇾", "franca": "🇫🇷", "senegal": "🇸🇳", "iraque": "🇮🇶", "noruega": "🇳🇴",
+    "argelia": "🇩🇿", "argentina": "🇦🇷", "austria": "🇦🇹", "jordania": "🇯🇴", "portugal": "🇵🇹",
+    "rd congo": "🇨🇩", "curacao": "🇨🇼", "uzbequistao": "🇺🇿", "colombia": "🇨🇴", "inglaterra": "🏴󠁧󠁢󠁥󠁮ッグ󠁿", 
+    "croacia": "🇭🇷", "gana": "🇬🇭", "panama": "🇵🇦"
+};
+
+// 🗺️ DICIONÁRIO COMPLETO DE TRADUÇÃO E UNIFICAÇÃO
+const TRADUCAO_PAISES = {
+    "germany": "Alemanha", "paraguay": "Paraguai", "france": "França", "sweden": "Suécia",
+    "south africa": "África do Sul", "canada": "Canadá", "netherlands": "Holanda", "morocco": "Marrocos",
+    "portugal": "Portugal", "croatia": "Croácia", "spain": "Espanha", "austria": "Áustria",
+    "united states": "Estados Unidos", "usa": "Estados Unidos", 
+    "bosnia & herzegovina": "Bósnia e Herzegovina", "bosnia and herzegovina": "Bósnia e Herzegovina", 
+    "bosnia-herzegovina": "Bósnia e Herzegovina", "bosnia": "Bósnia e Herzegovina", 
+    "belgium": "Bélgica", "senegal": "Senegal", "brazil": "Brasil", "japan": "Japão", 
+    "ivory coast": "Costa do Marfim", "cote d'ivoire": "Costa do Marfim", "norway": "Noruega", 
+    "mexico": "México", "ecuador": "Equador", "england": "Inglaterra", "dr congo": "RD Congo", 
+    "congo dr": "RD Congo", "congo": "RD Congo", "argentina": "Argentina", "cape verde": "Cabo Verde", 
+    "australia": "Austrália", "egypt": "Egito", "switzerland": "Suíça", "algeria": "Argélia", 
+    "colombia": "Colômbia", "ghana": "Gana", "south korea": "Coreia do Sul", "korea republic": "Coreia do Sul",
+    "czech republic": "República Tcheca", "czechia": "República Tcheca", "qatar": "Catar", "catar": "Catar",
+    "scotland": "Escócia", "haiti": "Haiti", "turkey": "Turquia", "tunisia": "Tunísia",
+    "iran": "Irã", "new zealand": "Nova Zelândia", "saudi arabia": "Arábia Saudita",
+    "uruguay": "Uruguai", "iraq": "Iraque", "jordan": "Jordânia", "curacao": "Curaçao",
+    "uzbekistan": "Uzbequistão", "panama": "Panamá"
 };
 
 const BANCO_FAIR_PLAY = {};
@@ -69,6 +50,12 @@ function normalizarTexto(texto) {
     return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
+function traduzirNomePais(nomePais) {
+    if (!nomePais) return "";
+    const chave = normalizarTexto(nomePais);
+    return TRADUCAO_PAISES[chave] || nomePais;
+}
+
 function obterEmojiBandeira(nomePais) {
     const chave = normalizarTexto(nomePais);
     return DICIONARIO_BANDEIRAS[chave] || "🏳️"; 
@@ -77,10 +64,11 @@ function obterEmojiBandeira(nomePais) {
 function cruzarDados(dadosGrupos, dadosJogos) {
     const grupos = {};
 
+    // MODIFICAÇÃO CRÍTICA: Bloqueia termos como W75, W16, etc. (^w\d+)
     function ehTimeValido(nome) {
         if (!nome) return false;
-        const n = nome.toString().trim();
-        if (n.includes("/") || n.match(/^[0-9]/) || n.toLowerCase().includes("winner")) return false;
+        const n = nome.toString().trim().toLowerCase();
+        if (n.includes("/") || n.match(/^[0-9]/) || n.match(/^w\d+/) || n.includes("winner") || n.includes("vencedor") || n === "tbd" || n === "?" || n.includes("a definir")) return false;
         return true;
     }
 
@@ -94,11 +82,12 @@ function cruzarDados(dadosGrupos, dadosJogos) {
         
         if (Array.isArray(times)) {
             times.forEach(t => {
-                let nomePais = (typeof t === 'object' && t !== null) ? (t.name || t.title) : t;
-                if (ehTimeValido(nomePais)) {
-                    const chaveNormalizada = normalizarTexto(nomePais);
+                let nomePaisOriginal = (typeof t === 'object' && t !== null) ? (t.name || t.title) : t;
+                if (ehTimeValido(nomePaisOriginal)) {
+                    let nomeTraduzido = traduzirNomePais(nomePaisOriginal);
+                    const chaveNormalizada = normalizarTexto(nomeTraduzido);
                     grupos[nomeGrupo].selecoes[chaveNormalizada] = {
-                        nome: nomePais, pontos: 0, saldo_geral: 0, gols_geral: 0, jogos_contados: 0
+                        nome: nomeTraduzido, pontos: 0, saldo_geral: 0, gols_geral: 0, jogos_contados: 0
                     };
                 }
             });
@@ -107,10 +96,13 @@ function cruzarDados(dadosGrupos, dadosJogos) {
 
     const matches = (dadosJogos && Array.isArray(dadosJogos.matches)) ? dadosJogos.matches : [];
     matches.forEach(partida => {
-        const nomeCasa = partida.team1 || partida.home_team || (partida.team && partida.team.name);
-        const nomeFora = partida.team2 || partida.away_team;
+        const nomeCasaOriginal = partida.team1 || partida.home_team || (partida.team && partida.team.name);
+        const nomeForaOriginal = partida.team2 || partida.away_team;
         
-        if (!ehTimeValido(nomeCasa) || !ehTimeValido(nomeFora)) return;
+        if (!ehTimeValido(nomeCasaOriginal) || !ehTimeValido(nomeForaOriginal)) return;
+
+        const nomeCasa = traduzirNomePais(nomeCasaOriginal);
+        const nomeFora = traduzirNomePais(nomeForaOriginal);
 
         const chaveCasa = normalizarTexto(nomeCasa);
         const chaveFora = normalizarTexto(nomeFora);
@@ -118,7 +110,6 @@ function cruzarDados(dadosGrupos, dadosJogos) {
         const grupoCasaOriginal = Object.keys(grupos).find(gNome => grupos[gNome] && grupos[gNome].selecoes[chaveCasa]);
         const grupoForaOriginal = Object.keys(grupos).find(gNome => grupos[gNome] && grupos[gNome].selecoes[chaveFora]);
 
-        
         if (grupoCasaOriginal && grupoForaOriginal && grupoCasaOriginal !== grupoForaOriginal) return;
 
         let grupoPertencente = grupoCasaOriginal || grupoForaOriginal;
@@ -210,7 +201,7 @@ function obterMelhoresTerceiros(gruposProcessados) {
         if (jogoDireto) {
             let ptsA = 0, ptsB = 0, gpA = 0, gpB = 0;
             if (jogoDireto.casa === a.nome) { gpA = jogoDireto.golsCasa; gpB = jogoDireto.golsFora; } 
-            else { gpA = jogoDireto.golsFora; gpB = jogoDireto.golsCasa; }
+            else { gpA = lookup; gpA = jogoDireto.golsFora; gpB = jogoDireto.golsCasa; }
             let sgA = gpA - gpB; let sgB = gpB - gpA;
             if (gpA > gpB) ptsA = 3; else if (gpB > gpA) ptsB = 3; else { ptsA = 1; ptsB = 1; }
             if (ptsB !== ptsA) return ptsB - ptsA;
