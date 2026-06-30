@@ -14,6 +14,19 @@ const DICIONARIO_BANDEIRAS = {
     "croatia": "🇭🇷", "ghana": "🇬🇭", "panama": "🇵🇦"
 };
 
+const TRADUCAO_PAISES = {
+    "germany": "Alemanha", "paraguay": "Paraguai", "france": "França", "sweden": "Suécia",
+    "south africa": "África do Sul", "canada": "Canadá", "netherlands": "Holanda", "morocco": "Marrocos",
+    "portugal": "Portugal", "croatia": "Croácia", "spain": "Espanha", "austria": "Áustria",
+    "united states": "Estados Unidos", "usa": "Estados Unidos", "bosnia & herzegovina": "Bósnia e Hezergovina",
+    "bosnia and herzegovina": "Bósnia e Hezergovina", "belgium": "Bélgica", "senegal": "Senegal",
+    "brazil": "Brasil", "japan": "Japão", "ivory coast": "Costa do Marfim", "norway": "Noruega",
+    "mexico": "México", "ecuador": "Equador", "england": "Inglaterra", "dr congo": "RD Congo",
+    "congo dr": "RD Congo", "congo": "RD Congo", "argentina": "Argentina", "cape verde": "Cabo Verde",
+    "australia": "Austrália", "egypt": "Egito", "switzerland": "Suíça", "algeria": "Argélia",
+    "colombia": "Colômbia", "ghana": "Gana"
+};
+
 function normalizarTexto(texto) {
     if (!texto) return "";
     return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -24,6 +37,23 @@ function obterEmojiBandeira(nomePais) {
     return DICIONARIO_BANDEIRAS[chave] || "🏳️";
 }
 
+// Traduz os países reais e também converte "Winner Match 74" para "Vencedor (número do jogo)"
+function traduzirNomePais(nomePais) {
+    if (!nomePais) return "?";
+    const textoNorm = nomePais.toString().toLowerCase().trim();
+    
+    if (textoNorm.includes("winner match") || textoNorm.includes("winner of match")) {
+        const num = textoNorm.match(/\d+/);
+        return num ? `Vencedor  ${num[0]}` : "Vencedor";
+    }
+    if (textoNorm.startsWith("w") && !isNaN(textoNorm.substring(1))) {
+        return `Vencedor  ${textoNorm.substring(1)}`;
+    }
+
+    const chave = normalizarTexto(nomePais);
+    return TRADUCAO_PAISES[chave] || nomePais;
+}
+
 function converterParaBrasilia(horarioOriginal) {
     if (!horarioOriginal) return "Horário a definir";
     try {
@@ -32,7 +62,7 @@ function converterParaBrasilia(horarioOriginal) {
 
         const [horaStr, minutoStr] = partes[0].split(":");
         let horas = parseInt(horaStr, 10);
-        const minutos = minutoStr;
+        const minutes = minutoStr;
 
         let fusoOriginal = 0;
         const fusoStr = partes[1].toUpperCase();
@@ -49,7 +79,7 @@ function converterParaBrasilia(horarioOriginal) {
         if (horaBrasilia >= 24) horaBrasilia -= 24;
 
         const horaFinal = horaBrasilia.toString().padStart(2, '0');
-        return `${horaFinal}:${minutos} BRT`;
+        return `${horaFinal}:${minutes} BRT`;
     } catch (e) {
         return horarioOriginal;
     }
@@ -73,7 +103,7 @@ function processarPlayoffs(dadosJogos) {
     const chavesBusca = {
         "r32": { titulo: "16 av", jogos: [] },
         "r16": { titulo: "Oitavas", jogos: [] },
-        "quarter": { titulo: "Quartas", jobs: [], jogos: [] },
+        "quarter": { titulo: "Quartas", jogos: [] },
         "semi": { titulo: "Semi", jogos: [] },
         "final": { titulo: "Final", jogos: [] }
     };
@@ -95,15 +125,69 @@ function renderizarChaveamentoConvergente(fases) {
     const container = document.getElementById('chaveamento-container');
     container.className = "w-full overflow-x-auto pb-4"; 
 
-    const dividirChave = (jogos) => {
-        const metade = Math.ceil(jogos.length / 2);
-        return [jogos.slice(0, metade), jogos.slice(metade)];
+    const ordemEsquerda = [
+        "germany", "france", "south africa", "netherlands", 
+        "portugal", "spain", "united states", "usa", 
+        "bosnia and herzegovina", "bosnia & herzegovina", "belgium"
+    ];
+
+    // 🧠 NOVO: Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
+    const numsEsq = new Set();
+
+    // Função que verifica se um jogo pertence à linhagem da esquerda (por time real ou por número de jogo anterior)
+    const pertenceAChaveEsquerda = (j) => {
+        const t1 = normalizarTexto(j.team1);
+        const t2 = normalizarTexto(j.team2);
+
+        if (ordemEsquerda.includes(t1) || ordemEsquerda.includes(t2)) return true;
+
+        const extrairNumero = (txt) => {
+            const m = txt.match(/\d+/);
+            return m ? parseInt(m[0], 10) : null;
+        };
+        const n1 = extrairNumero(t1);
+        const n2 = extrairNumero(t2);
+
+        if (n1 && numsEsq.has(n1)) return true;
+        if (n2 && numsEsq.has(n2)) return true;
+
+        return false;
     };
 
-    const [r32Esq, r32Dir] = dividirChave(fases["r32"].jogos);
-    const [r16Esq, r16Dir] = dividirChave(fases["r16"].jogos);
-    const [qfEsq, qfDir] = dividirChave(fases["quarter"].jogos);
-    const [sfEsq, sfDir] = dividirChave(fases["semi"].jogos);
+    // 1. SEPARAÇÃO DA FASE DE 16 AVOS (Round of 32)
+    const r32Esq = []; const r32Dir = [];
+    fases["r32"].jogos.forEach(j => {
+        if (pertenceAChaveEsquerda(j)) {
+            r32Esq.push(j);
+            if (j.num) numsEsq.add(j.num); // Alimenta a árvore genealógica da esquerda
+        } else { r32Dir.push(j); }
+    });
+
+    // 2. SEPARAÇÃO DAS OITAVAS BASEADA NA LINHAGEM
+    const r16Esq = []; const r16Dir = [];
+    fases["r16"].jogos.forEach(j => {
+        if (pertenceAChaveEsquerda(j)) {
+            r16Esq.push(j);
+            if (j.num) numsEsq.add(j.num);
+        } else { r16Dir.push(j); }
+    });
+
+    // 3. SEPARAÇÃO DAS QUARTAS BASEADA NA LINHAGEM
+    const qfEsq = []; const qfDir = [];
+    fases["quarter"].jogos.forEach(j => {
+        if (pertenceAChaveEsquerda(j)) {
+            qfEsq.push(j);
+            if (j.num) numsEsq.add(j.num);
+        } else { qfDir.push(j); }
+    });
+
+    // 4. SEPARAÇÃO DAS SEMIFINAIS BASEADA NA LINHAGEM
+    const sfEsq = []; const sfDir = [];
+    fases["semi"].jogos.forEach(j => {
+        if (pertenceAChaveEsquerda(j)) { sfEsq.push(j); } 
+        else { sfDir.push(j); }
+    });
+
     const finalJogo = fases["final"].jogos;
 
     const renderizarColuna = (jogos, titulo, placeholders = 0) => {
@@ -114,23 +198,14 @@ function renderizarChaveamentoConvergente(fases) {
             html += `<p class="text-center text-[10px] text-slate-600 my-auto italic">?</p>`;
         } else {
             jogos.forEach(j => {
-                // CORREÇÃO: Busca primeiro o placar da prorrogação (et), se não houver, busca o tempo normal (ft)
-                let g1 = '-';
-                let g2 = '-';
+                let g1 = '-'; let g2 = '-';
                 if (j.score) {
-                    if (Array.isArray(j.score.et)) {
-                        g1 = j.score.et[0];
-                        g2 = j.score.et[1];
-                    } else if (Array.isArray(j.score.ft)) {
-                        g1 = j.score.ft[0];
-                        g2 = j.score.ft[1];
-                    }
+                    if (Array.isArray(j.score.et)) { g1 = j.score.et[0]; g2 = j.score.et[1]; } 
+                    else if (Array.isArray(j.score.ft)) { g1 = j.score.ft[0]; g2 = j.score.ft[1]; }
                 }
                 
-                // CORREÇÃO CRÍTICA: Troca '.ps' por '.p' para alinhar perfeitamente com a API do GitHub
                 if (j.score && Array.isArray(j.score.p) && j.score.p.length === 2) {
-                    g1 += ` (${j.score.p[0]})`;
-                    g2 += ` (${j.score.p[1]})`;
+                    g1 += ` (${j.score.p[0]})`; g2 += ` (${j.score.p[1]})`;
                 }
 
                 const dataFormatada = j.date ? j.date.split('-').reverse().slice(0,2).join('/') : '?';
@@ -139,21 +214,19 @@ function renderizarChaveamentoConvergente(fases) {
 
                 html += `
                     <div onclick="rolarAteOJogo(${j.num || 0})" class="relative bg-slate-800/90 rounded p-1.5 border border-slate-700 text-xs shadow-sm hover:border-emerald-500 cursor-pointer transition-all active:scale-95">
-                        
                         <span class="absolute top-[2px] left-[4px] text-[11px] text-slate-400/80 font-extrabold tracking-tighter">${numJogo}</span>
-
                         <div class="text-[9px] text-emerald-400 font-semibold mb-0.5 border-b border-slate-700/50 pb-0.5 text-center">
                             ${dataFormatada} • ${horarioBrasilia}
                         </div>
                         <div class="flex justify-between items-center mb-0.5 gap-1">
-                            <span class="truncate pr-0.5 text-slate-200" title="${j.team1 || 'A definir'}">
-                                ${obterEmojiBandeira(j.team1)} <span>${j.team1 || '?'}</span>
+                            <span class="truncate pr-0.5 text-slate-200" title="${traduzirNomePais(j.team1)}">
+                                ${obterEmojiBandeira(j.team1)} <span>${traduzirNomePais(j.team1)}</span>
                             </span>
                             <span class="font-bold text-white bg-slate-900 px-1.5 rounded text-xs shrink-0">${g1}</span>
                         </div>
                         <div class="flex justify-between items-center gap-1">
-                            <span class="truncate pr-0.5 text-slate-200" title="${j.team2 || 'A definir'}">
-                                ${obterEmojiBandeira(j.team2)} <span>${j.team2 || '?'}</span>
+                            <span class="truncate pr-0.5 text-slate-200" title="${traduzirNomePais(j.team2)}">
+                                ${obterEmojiBandeira(j.team2)} <span>${traduzirNomePais(j.team2)}</span>
                             </span>
                             <span class="font-bold text-white bg-slate-900 px-1.5 rounded text-xs shrink-0">${g2}</span>
                         </div>
@@ -214,24 +287,15 @@ function renderizarListaDeJogos(fases) {
         fases[chave].jogos.forEach(j => {
             totalJogos++;
             
-            // CORREÇÃO: Lógica de prorrogação e tempo normal replicada na lista inferior
-            let g1 = null;
-            let g2 = null;
+            let g1 = null; let g2 = null;
             if (j.score) {
-                if (Array.isArray(j.score.et)) {
-                    g1 = j.score.et[0];
-                    g2 = j.score.et[1];
-                } else if (Array.isArray(j.score.ft)) {
-                    g1 = j.score.ft[0];
-                    g2 = j.score.ft[1];
-                }
+                if (Array.isArray(j.score.et)) { g1 = j.score.et[0]; g2 = j.score.et[1]; } 
+                else if (Array.isArray(j.score.ft)) { g1 = j.score.ft[0]; g2 = j.score.ft[1]; }
             }
             const jogoIniciado = g1 !== null && g2 !== null;
             
-            // CORREÇÃO CRÍTICA: Troca '.ps' por '.p' nos cards de detalhes também
             if (jogoIniciado && j.score && Array.isArray(j.score.p) && j.score.p.length === 2) {
-                g1 += ` (${j.score.p[0]})`;
-                g2 += ` (${j.score.p[1]})`;
+                g1 += ` (${j.score.p[0]})`; g2 += ` (${j.score.p[1]})`;
             }
 
             const horarioBrasilia = converterParaBrasilia(j.time);
@@ -245,11 +309,11 @@ function renderizarListaDeJogos(fases) {
                     </div>
                     <div class="space-y-3 my-4">
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team1)} ${j.team1 || 'A definir'}</span>
+                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team1)} ${traduzirNomePais(j.team1)}</span>
                             <span class="text-xl font-extrabold text-white">${jogoIniciado ? g1 : '-'}</span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team2)} ${j.team2 || 'A definir'}</span>
+                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team2)} ${traduzirNomePais(j.team2)}</span>
                             <span class="text-xl font-extrabold text-white">${jogoIniciado ? g2 : '-'}</span>
                         </div>
                     </div>
