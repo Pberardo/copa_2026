@@ -1,5 +1,5 @@
-const URL_JOGOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
-
+//const URL_JOGOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
+const URL_JOGOS = 'worldcup.json';
 const DICIONARIO_BANDEIRAS = {
     "mexico": "🇲🇽", "south africa": "🇿🇦", "south korea": "🇰🇷", "czech republic": "🇨🇿",
     "switzerland": "🇨🇭", "canada": "🇨🇦", "bosnia & herzegovina": "🇧🇦", "bosnia and herzegovina": "🇧🇦",
@@ -128,7 +128,9 @@ function renderizarChaveamentoConvergente(fases) {
     const ordemEsquerda = [
         "germany", "france", "south africa", "netherlands", 
         "portugal", "spain", "united states", "usa", 
-        "bosnia and herzegovina", "bosnia & herzegovina", "belgium"
+        "bosnia and herzegovina", "bosnia & herzegovina", "belgium", 
+        "morroco", "canada", "paraguay", "croatia", "senegal", "france",
+        "sweden", "austria"
     ];
 
     // 🧠 NOVO: Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
