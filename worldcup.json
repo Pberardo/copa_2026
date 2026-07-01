@@ -956,6 +956,7 @@
     "time": "12:00 UTC-4",
     "team1": "England",
     "team2": "DR Congo",
+    "score": {"ft": [2, 1], "ht": [0, 1]},
     "ground": "Atlanta"},
    {"round": "Round of 32",
     "num": 81,
