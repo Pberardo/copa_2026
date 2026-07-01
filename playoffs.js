@@ -133,7 +133,7 @@ function renderizarChaveamentoConvergente(fases) {
         "sweden", "austria"
     ];
 
-    // 🧠 NOVO: Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
+    // Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
     const numsEsq = new Set();
 
     // Função que verifica se um jogo pertence à linhagem da esquerda (por time real ou por número de jogo anterior)
