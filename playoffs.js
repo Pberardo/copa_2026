@@ -133,7 +133,7 @@ function renderizarChaveamentoConvergente(fases) {
         "sweden", "austria"
     ];
 
-    // Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
+    // 🧠 NOVO: Set dinâmico para rastrear a linhagem dos jogos que pertencem ao Lado Esquerdo
     const numsEsq = new Set();
 
     // Função que verifica se um jogo pertence à linhagem da esquerda (por time real ou por número de jogo anterior)
@@ -300,28 +300,73 @@ function renderizarListaDeJogos(fases) {
                 g1 += ` (${j.score.p[0]})`; g2 += ` (${j.score.p[1]})`;
             }
 
+            const placar1 = jogoIniciado ? g1 : '-';
+            const placar2 = jogoIniciado ? g2 : '-';
+
             const horarioBrasilia = converterParaBrasilia(j.time);
             const badgeTitulo = j.num ? `JOGO ${j.num} • ${fases[chave].titulo}` : fases[chave].titulo;
+            const dataFormatada = j.date ? j.date.split('-').reverse().join('/') : '';
+
+            // 🧠 NOVA LÓGICA: Agrupamento de gols por jogador
+            const formatarGols = (golsArr) => {
+                if (!golsArr || !Array.isArray(golsArr) || golsArr.length === 0) return '';
+                
+                const golsAgrupados = {};
+                
+                golsArr.forEach(g => {
+                    const nomeJogador = g.name || "Desconhecido";
+                    if (!golsAgrupados[nomeJogador]) {
+                        golsAgrupados[nomeJogador] = [];
+                    }
+                    const infoExtra = g.penalty ? ' (P)' : g.owngoal ? ' (GC)' : '';
+                    golsAgrupados[nomeJogador].push(`${g.minute}'${infoExtra}`);
+                });
+
+                return Object.keys(golsAgrupados).map(nome => {
+                    const minutosFormatados = golsAgrupados[nome].join(', ');
+                    return `<div class="truncate" title="${nome}">⚽ ${nome} <span class="font-bold text-slate-300">${minutosFormatados}</span></div>`;
+                }).join('');
+            };
+
+            const listaGolsCasa = formatarGols(j.goals1);
+            const listaGolsFora = formatarGols(j.goals2);
 
             container.innerHTML += `
-                <div id="match-${j.num || 0}" class="bg-slate-800/50 rounded-xl p-5 border border-slate-700/60 shadow-md flex flex-col justify-between hover:bg-slate-800 transition-all duration-500">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">${badgeTitulo}</span>
-                        <span class="text-xs text-slate-400 font-medium">${j.date ? j.date.split('-').reverse().join('/') : ''}</span>
+                <div id="match-${j.num || 0}" class="bg-slate-800/50 rounded-xl p-5 border border-slate-700/60 shadow-md flex flex-col hover:bg-slate-800 transition-all duration-500">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-700/50 pb-2">
+                        <span class="text-[10px] md:text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">${badgeTitulo}</span>
+                        <span class="text-xs text-slate-400 font-medium">${dataFormatada}</span>
                     </div>
-                    <div class="space-y-3 my-4">
-                        <div class="flex justify-between items-center text-base">
-                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team1)} ${traduzirNomePais(j.team1)}</span>
-                            <span class="text-xl font-extrabold text-white">${jogoIniciado ? g1 : '-'}</span>
+                    
+                    <div class="flex justify-between items-start my-2 text-base h-full">
+                        
+                        <div class="flex-1 flex flex-col text-center border-r border-slate-700/40 pr-2">
+                            <div class="flex justify-center items-center gap-1.5 mb-1.5">
+                                <span class="text-xl">${obterEmojiBandeira(j.team1)}</span>
+                                <span class="font-semibold text-slate-200 text-sm md:text-base truncate max-w-[100px] md:max-w-none" title="${traduzirNomePais(j.team1)}">${traduzirNomePais(j.team1)}</span>
+                            </div>
+                            <div class="text-3xl font-extrabold text-white mb-3">${placar1}</div>
+                            <div class="text-[10px] md:text-xs text-slate-400 space-y-1 mt-auto">
+                                ${listaGolsCasa}
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center text-base">
-                            <span class="font-medium text-slate-200 flex items-center gap-2">${obterEmojiBandeira(j.team2)} ${traduzirNomePais(j.team2)}</span>
-                            <span class="text-xl font-extrabold text-white">${jogoIniciado ? g2 : '-'}</span>
+
+                        <div class="flex-1 flex flex-col text-center pl-2">
+                            <div class="flex justify-center items-center gap-1.5 mb-1.5">
+                                <span class="font-semibold text-slate-200 text-sm md:text-base truncate max-w-[100px] md:max-w-none" title="${traduzirNomePais(j.team2)}">${traduzirNomePais(j.team2)}</span>
+                                <span class="text-xl">${obterEmojiBandeira(j.team2)}</span>
+                            </div>
+                            <div class="text-3xl font-extrabold text-white mb-3">${placar2}</div>
+                            <div class="text-[10px] md:text-xs text-slate-400 space-y-1 mt-auto">
+                                ${listaGolsFora}
+                            </div>
                         </div>
+
                     </div>
-                    <div class="text-[11px] text-slate-500 border-t border-slate-700/40 pt-2 flex justify-between">
-                        <span>🏟️ ${j.ground || 'Estádio não definido'}</span>
-                        <span class="text-emerald-400 font-semibold">⏰ ${horarioBrasilia}</span>
+
+                    <div class="text-[11px] text-slate-500 border-t border-slate-700/40 pt-3 mt-4 flex justify-between">
+                        <span class="truncate pr-2">🏟️ ${j.ground || 'Estádio não definido'}</span>
+                        <span class="text-emerald-400 font-semibold shrink-0">⏰ ${horarioBrasilia}</span>
                     </div>
                 </div>
             `;
