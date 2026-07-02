@@ -13,7 +13,7 @@ const DICIONARIO_BANDEIRAS = {
     "ira": "🇮🇷", "nova zelandia": "🇳🇿", "espanha": "🇪🇸", "cabo verde": "🇨🇻", "arabia saudita": "🇸🇦",
     "uruguai": "🇺🇾", "franca": "🇫🇷", "senegal": "🇸🇳", "iraque": "🇮🇶", "noruega": "🇳🇴",
     "argelia": "🇩🇿", "argentina": "🇦🇷", "austria": "🇦🇹", "jordania": "🇯🇴", "portugal": "🇵🇹",
-    "rd congo": "🇨🇩", "curacao": "🇨🇼", "uzbequistao": "🇺🇿", "colombia": "🇨🇴", "inglaterra": "🏴󠁧󠁢󠁥󠁮ッグ󠁿", 
+    "rd congo": "🇨🇩", "curacao": "🇨🇼", "uzbequistao": "🇺🇿", "colombia": "🇨🇴", "inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
     "croacia": "🇭🇷", "gana": "🇬🇭", "panama": "🇵🇦"
 };
 
