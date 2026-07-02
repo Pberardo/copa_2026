@@ -267,7 +267,7 @@ function renderizarChaveamentoConvergente(fases) {
                     <!-- 
                     <img src="taca.png" alt="Troféu" class="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><text y=\'30\' font-size=\'30\'>🏆</text></svg>'">
                     -->
-                    <h2 class="text-[9px] font-extrabold text-yellow-500 uppercase tracking-wider mt-1">Final</h2>
+                    <h2 class="text-[25px] font-extrabold text-yellow-500 uppercase tracking-wider mt-1">Final</h2>
                 </div>
                 ${renderizarColuna(finalJogo, 'Final', 1)}
             </div>
