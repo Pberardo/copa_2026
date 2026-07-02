@@ -125,7 +125,6 @@ function renderizarChaveamentoConvergente(fases) {
     const container = document.getElementById('chaveamento-container');
     container.className = "w-full pb-8"; 
 
-    // Lógica de rastreamento de linhagem
     const ordemEsquerda = [
         "germany", "france", "south africa", "netherlands", 
         "portugal", "spain", "united states", "usa", 
@@ -158,7 +157,6 @@ function renderizarChaveamentoConvergente(fases) {
     
     const finalJogo = fases["final"].jogos;
 
-    // 📱 NOVO: Card Ultracompacto (estilo oficial da FIFA)
     const gerarCardCompacto = (j) => {
         let g1 = '-'; let g2 = '-';
         if (j.score) {
@@ -166,13 +164,13 @@ function renderizarChaveamentoConvergente(fases) {
             else if (Array.isArray(j.score.ft)) { g1 = j.score.ft[0]; g2 = j.score.ft[1]; }
         }
         
-        // Pênaltis juntos do placar: ex -> 1(3) - 1(4)
         if (j.score && Array.isArray(j.score.p) && j.score.p.length === 2) {
             g1 += `(${j.score.p[0]})`; g2 += `(${j.score.p[1]})`;
         }
 
         const dataFormatada = j.date ? j.date.split('-').reverse().slice(0,2).join('/') : '?';
-        const horaFormatada = j.time ? j.time.split(' ')[0] : '';
+        const horarioBR = converterParaBrasilia(j.time);
+        const horaFormatada = horarioBR !== "A definir" ? horarioBR.replace(' BRT', '') : '';
         
         return `
             <div onclick="rolarAteOJogo(${j.num || 0})" class="relative bg-slate-900 rounded-lg p-1.5 md:p-2 border border-slate-700 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col items-center justify-center transition-transform active:scale-95 w-full">
@@ -205,9 +203,9 @@ function renderizarChaveamentoConvergente(fases) {
         </div>
     `;
 
-    // Gerador de Colunas do PC
+    // ✂️ CORREÇÃO: Adicionado 'h-fit' aqui na div principal para a borda não esticar verticalmente!
     const gerarColunaDesktop = (jogos, titulo, placeholders = 0) => {
-        let html = `<div class="flex-1 flex flex-col justify-center gap-2 bg-slate-950/40 p-2 rounded-xl border border-slate-800/60 min-w-[120px]">`;
+        let html = `<div class="flex flex-col justify-center gap-1.5 bg-slate-950/40 p-1.5 rounded-xl border border-slate-800/60 shrink-0 w-[110px] md:w-[125px] h-fit">`;
         html += `<h3 class="text-center text-[10px] font-bold uppercase text-emerald-400 mb-1 border-b border-slate-800 pb-1">${titulo}</h3>`;
         jogos.forEach(j => html += gerarCardCompacto(j));
         for (let i = jogos.length; i < placeholders; i++) html += gerarPlaceholder();
@@ -215,7 +213,6 @@ function renderizarChaveamentoConvergente(fases) {
         return html;
     };
 
-    // Gerador de Blocos do Celular (A mágica da grade acontece aqui)
     const gerarBlocoMobile = (jogos, titulo, placeholders, gridClass, limitarLargura = false) => {
         let html = `<div class="flex flex-col items-center w-full">`;
         html += `<h3 class="text-center text-xs font-bold text-slate-300 mb-2 tracking-wide">${titulo}</h3>`;
@@ -233,29 +230,34 @@ function renderizarChaveamentoConvergente(fases) {
 
     const conectorMobile = `<div class="w-px h-6 bg-slate-700/80 my-2"></div>`;
 
+    // ✂️ CORREÇÃO: Usando 'items-center' nos flex containers para que as colunas fiquem centralizadas e com sua altura real.
     container.innerHTML = `
-        <div class="hidden md:flex flex-row justify-between items-stretch gap-2 mx-auto min-w-[1000px] max-w-full px-2 overflow-x-auto">
-            <div class="flex flex-1 gap-2 justify-start">
+        <div class="hidden md:flex flex-row justify-center items-stretch gap-2 lg:gap-4 mx-auto min-w-[1000px] max-w-full px-2 overflow-x-auto">
+            
+            <div class="flex items-center gap-2 lg:gap-4 justify-end">
                 ${gerarColunaDesktop(r32Esq, '16 avos', 8)}
                 ${gerarColunaDesktop(r16Esq, 'Oitavas', 4)}
                 ${gerarColunaDesktop(qfEsq, 'Quartas', 2)}
                 ${gerarColunaDesktop(sfEsq, 'Semi', 1)}
             </div>
-            <div class="flex flex-col justify-center items-center px-2 shrink-0">
-                <img src="taca.png" alt="Troféu" class="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.3)] mb-2">
-                <h2 class="text-[10px] font-extrabold text-yellow-500 uppercase tracking-wider mb-2">Final</h2>
-                ${gerarColunaDesktop(finalJogo, '', 1)}
+            
+            <div class="flex flex-col justify-center items-center px-4 shrink-0 relative min-w-[140px]">
+                
+                <img src="taca.png" alt="Troféu" class="hover:scale-110 transition-transform duration-700" style="position: absolute; top: -80px; width: 350px; height: 500px; max-width: none !important; left: 50%; transform: translateX(-50%); z-index: 10; object-fit: contain; filter: drop-shadow(0 0 25px rgba(234, 179, 8, 0.6));">
+                
+                ${gerarColunaDesktop(finalJogo, 'Final', 1)}
             </div>
-            <div class="flex flex-1 gap-2 justify-end">
+            
+            <div class="flex items-center gap-2 lg:gap-4 justify-start">
                 ${gerarColunaDesktop(sfDir, 'Semi', 1)}
                 ${gerarColunaDesktop(qfDir, 'Quartas', 2)}
                 ${gerarColunaDesktop(r16Dir, 'Oitavas', 4)}
                 ${gerarColunaDesktop(r32Dir, '16 avos', 8)}
             </div>
+            
         </div>
 
         <div class="flex md:hidden flex-col items-center w-full px-1.5">
-            
             ${gerarBlocoMobile(r32Esq, '16 avos-de-final', 8, 'grid grid-cols-4 gap-1.5 w-full')}
             ${conectorMobile}
             ${gerarBlocoMobile(r16Esq, 'Oitavas de final', 4, 'grid grid-cols-4 gap-1.5 w-full')}
@@ -266,7 +268,9 @@ function renderizarChaveamentoConvergente(fases) {
             
             <div class="w-px h-8 bg-yellow-500/50 my-2"></div>
             <div class="flex flex-col items-center w-full bg-slate-900/40 py-4 rounded-xl border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]">
-                <img src="taca.png" alt="Troféu" class="w-12 h-12 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.5)] mb-2">
+                
+                <img src="taca_mobile.png" alt="Troféu Mobile" class="object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.6)] mb-2" style="width: 100px; height: 100px; max-width: none !important;">
+                
                 ${gerarBlocoMobile(finalJogo, 'Final', 1, 'w-full', true)}
             </div>
             <div class="w-px h-8 bg-yellow-500/50 my-2"></div>
