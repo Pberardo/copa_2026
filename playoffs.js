@@ -264,7 +264,8 @@ function renderizarChaveamentoConvergente(fases) {
 
             <div class="flex flex-col justify-center self-center h-fit items-center px-1 w-[140px] shrink-0">
                 <div class="text-center mb-1 flex flex-col items-center">
-                    <img src="taca.png" alt="Troféu" class="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><text y=\'30\' font-size=\'30\'>🏆</text></svg>'">
+                    <
+                    <!--<img src="taca.png" alt="Troféu" class="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><text y=\'30\' font-size=\'30\'>🏆</text></svg>'"> -->
                     <h2 class="text-[9px] font-extrabold text-yellow-500 uppercase tracking-wider mt-1">Final</h2>
                 </div>
                 ${renderizarColuna(finalJogo, 'Final', 1)}
