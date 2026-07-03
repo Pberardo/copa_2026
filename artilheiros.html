@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artilheiros - Copa do Mundo 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen p-4 md:p-8 font-sans">
+    
+   <header class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-center mb-10 border-b border-slate-800 pb-6 mt-2">
+        <div class="text-center md:text-left mb-4 md:mb-0">
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-emerald-400 flex items-center justify-center md:justify-start gap-2">
+                🏆 Estatísticas
+            </h1>
+            <p class="text-slate-400 mt-2 text-sm md:text-base">Top 10 Artilheiros da Copa 2026</p>
+        </div>
+        
+        <nav class="flex flex-wrap justify-center gap-2 md:gap-4">
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg border border-slate-700 transition-colors text-sm md:text-base">Fase de Grupos</a>
+            <a href="playoffs.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg border border-slate-700 transition-colors text-sm md:text-base">Mata-Mata</a>
+            <a href="artilheiros.html" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold border border-emerald-500 transition-colors flex items-center gap-1.5 text-sm md:text-base">Artilheiros</a>
+        </nav>
+    </header>
+
+    <div id="artilheiros-container" class="max-w-3xl mx-auto">
+        <p class="text-center text-slate-500 mt-10">Carregando dados dos artilheiros...</p>
+    </div>
+
+    <script src="artilheiros.js"></script>
+</body>
+</html>

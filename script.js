@@ -1,267 +1,243 @@
-// URLs Oficiais do repositório openfootball
-const URL_GRUPOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.groups.json';
-const URL_JOGOS = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
+const URL_JOGOS = 'worldcup.json';
 
-// 🇧🇷 DICIONÁRIO DE BANDEIRAS
+// Dicionários
 const DICIONARIO_BANDEIRAS = {
-    "mexico": "🇲🇽", "africa do sul": "🇿🇦", "coreia do sul": "🇰🇷", "republica tcheca": "🇨🇿",
-    "suica": "🇨🇭", "canada": "🇨🇦", "bosnia e herzegovina": "🇧🇦", "bosnia e hezergovina": "🇧🇦",
-    "catar": "🇶🇦", "brasil": "🇧🇷", "marrocos": "🇲🇦", "escocia": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-    "haiti": "🇭🇹", "estados unidos": "🇺🇸", "australia": "🇦🇺", "paraguai": "🇵🇾",
-    "turquia": "🇹🇷", "alemanha": "🇩🇪", "costa do marfim": "🇨🇮", "equador": "🇪🇨", "holanda": "🇳🇱",
-    "japao": "🇯🇵", "suecia": "🇸🇪", "tunisia": "🇹🇳", "belgica": "🇧🇪", "egito": "🇪🇬",
-    "ira": "🇮🇷", "nova zelandia": "🇳🇿", "espanha": "🇪🇸", "cabo verde": "🇨🇻", "arabia saudita": "🇸🇦",
-    "uruguai": "🇺🇾", "franca": "🇫🇷", "senegal": "🇸🇳", "iraque": "🇮🇶", "noruega": "🇳🇴",
-    "argelia": "🇩🇿", "argentina": "🇦🇷", "austria": "🇦🇹", "jordania": "🇯🇴", "portugal": "🇵🇹",
-    "rd congo": "🇨🇩", "curacao": "🇨🇼", "uzbequistao": "🇺🇿", "colombia": "🇨🇴", "inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
-    "croacia": "🇭🇷", "gana": "🇬🇭", "panama": "🇵🇦"
+    "mexico": "🇲🇽", "south africa": "🇿🇦", "south korea": "🇰🇷", "czech republic": "🇨🇿",
+    "switzerland": "🇨🇭", "canada": "🇨🇦", "bosnia & herzegovina": "🇧🇦", "bosnia and herzegovina": "🇧🇦",
+    "qatar": "🇶🇦", "catar": "🇶🇦", "brazil": "🇧🇷", "morocco": "🇲🇦", "scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "haiti": "🇭🇹", "united states": "🇺🇸", "usa": "🇺🇸", "australia": "🇦🇺", "paraguay": "🇵🇾",
+    "turkey": "🇹🇷", "germany": "🇩🇪", "ivory coast": "🇨🇮", "ecuador": "🇪🇨", "netherlands": "🇳🇱",
+    "japan": "🇯🇵", "sweden": "🇸🇪", "tunisia": "🇹🇳", "belgium": "🇧🇪", "egypt": "🇪🇬",
+    "iran": "🇮🇷", "new zealand": "🇳🇿", "spain": "🇪🇸", "cape verde": "🇨🇻", "saudi arabia": "🇸🇦",
+    "uruguay": "🇺🇾", "france": "🇫🇷", "senegal": "🇸🇳", "iraq": "🇮🇶", "norway": "🇳🇴",
+    "algeria": "🇩🇿", "argentina": "🇦🇷", "austria": "🇦🇹", "jordan": "🇯🇴", "portugal": "🇵🇹",
+    "dr congo": "🇨🇩", "curacao": "🇨🇼", "uzbekistan": "🇺🇿","colombia": "🇨🇴", "england": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
+    "croatia": "🇭🇷", "ghana": "🇬🇭", "panama": "🇵🇦"
 };
 
-// 🗺️ DICIONÁRIO COMPLETO DE TRADUÇÃO E UNIFICAÇÃO
 const TRADUCAO_PAISES = {
     "germany": "Alemanha", "paraguay": "Paraguai", "france": "França", "sweden": "Suécia",
     "south africa": "África do Sul", "canada": "Canadá", "netherlands": "Holanda", "morocco": "Marrocos",
     "portugal": "Portugal", "croatia": "Croácia", "spain": "Espanha", "austria": "Áustria",
-    "united states": "Estados Unidos", "usa": "Estados Unidos", 
-    "bosnia & herzegovina": "Bósnia e Herzegovina", "bosnia and herzegovina": "Bósnia e Herzegovina", 
-    "bosnia-herzegovina": "Bósnia e Herzegovina", "bosnia": "Bósnia e Herzegovina", 
-    "belgium": "Bélgica", "senegal": "Senegal", "brazil": "Brasil", "japan": "Japão", 
-    "ivory coast": "Costa do Marfim", "cote d'ivoire": "Costa do Marfim", "norway": "Noruega", 
-    "mexico": "México", "ecuador": "Equador", "england": "Inglaterra", "dr congo": "RD Congo", 
-    "congo dr": "RD Congo", "congo": "RD Congo", "argentina": "Argentina", "cape verde": "Cabo Verde", 
-    "australia": "Austrália", "egypt": "Egito", "switzerland": "Suíça", "algeria": "Argélia", 
-    "colombia": "Colômbia", "ghana": "Gana", "south korea": "Coreia do Sul", "korea republic": "Coreia do Sul",
-    "czech republic": "República Tcheca", "czechia": "República Tcheca", "qatar": "Catar", "catar": "Catar",
-    "scotland": "Escócia", "haiti": "Haiti", "turkey": "Turquia", "tunisia": "Tunísia",
-    "iran": "Irã", "new zealand": "Nova Zelândia", "saudi arabia": "Arábia Saudita",
-    "uruguay": "Uruguai", "iraq": "Iraque", "jordan": "Jordânia", "curacao": "Curaçao",
-    "uzbekistan": "Uzbequistão", "panama": "Panamá"
+    "united states": "Estados Unidos", "usa": "Estados Unidos", "bosnia & herzegovina": "Bósnia e Hezergovina",
+    "bosnia and herzegovina": "Bósnia e Hezergovina", "belgium": "Bélgica", "senegal": "Senegal",
+    "brazil": "Brasil", "japan": "Japão", "ivory coast": "Costa do Marfim", "norway": "Noruega",
+    "mexico": "México", "ecuador": "Equador", "england": "Inglaterra", "dr congo": "RD Congo",
+    "congo dr": "RD Congo", "congo": "RD Congo", "argentina": "Argentina", "cape verde": "Cabo Verde",
+    "australia": "Austrália", "egypt": "Egito", "switzerland": "Suíça", "algeria": "Argélia",
+    "colombia": "Colômbia", "ghana": "Gana"
 };
-
-const BANCO_FAIR_PLAY = {};
-
-function calcularPontosFairPlay(nomePais) {
-    const dados = BANCO_FAIR_PLAY[nomePais] || { amarelos: 0, verm_indiretos: 0, verm_diretos: 0, am_mais_verd: 0 };
-    return (dados.amarelos * -1) + (dados.verm_indiretos * -3) + (dados.verm_diretos * -4) + (dados.am_mais_verd * -5);
-}
 
 function normalizarTexto(texto) {
     if (!texto) return "";
     return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
-
+function obterEmojiBandeira(nomePais) {
+    const chave = normalizarTexto(nomePais);
+    return DICIONARIO_BANDEIRAS[chave] || "🏳️";
+}
 function traduzirNomePais(nomePais) {
-    if (!nomePais) return "";
+    if (!nomePais) return "?";
     const chave = normalizarTexto(nomePais);
     return TRADUCAO_PAISES[chave] || nomePais;
 }
 
-function obterEmojiBandeira(nomePais) {
-    const chave = normalizarTexto(nomePais);
-    return DICIONARIO_BANDEIRAS[chave] || "🏳️"; 
+// 🧮 FUNÇÃO: Calcula a pontuação e ordena a tabela do grupo
+function calcularClassificacao(jogosGrupo) {
+    const times = {};
+
+    jogosGrupo.forEach(j => {
+        const t1 = j.team1; const t2 = j.team2;
+
+        // Inicializa os times se não existirem no dicionário
+        if (!times[t1]) times[t1] = { nome: t1, pts: 0, j: 0, v: 0, e: 0, d: 0, gf: 0, gc: 0, sg: 0 };
+        if (!times[t2]) times[t2] = { nome: t2, pts: 0, j: 0, v: 0, e: 0, d: 0, gf: 0, gc: 0, sg: 0 };
+
+        // Só contabiliza se o jogo já acabou (tem placar)
+        if (j.score && Array.isArray(j.score.ft)) {
+            const g1 = j.score.ft[0]; const g2 = j.score.ft[1];
+
+            times[t1].j++; times[t2].j++;
+            times[t1].gf += g1; times[t2].gf += g2;
+            times[t1].gc += g2; times[t2].gc += g1;
+
+            if (g1 > g2) { // Vitória T1
+                times[t1].v++; times[t1].pts += 3;
+                times[t2].d++;
+            } else if (g1 < g2) { // Vitória T2
+                times[t2].v++; times[t2].pts += 3;
+                times[t1].d++;
+            } else { // Empate
+                times[t1].e++; times[t2].e++;
+                times[t1].pts += 1; times[t2].pts += 1;
+            }
+        }
+    });
+
+    // Calcula o saldo de gols e transforma em array
+    const listaTimes = Object.values(times).map(t => {
+        t.sg = t.gf - t.gc;
+        return t;
+    });
+
+    // Ordena: Pontos > Saldo de Gols > Gols Feitos
+    return listaTimes.sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (b.sg !== a.sg) return b.sg - a.sg;
+        return b.gf - a.gf;
+    });
 }
 
-function cruzarDados(dadosGrupos, dadosJogos) {
-    const grupos = {};
+// 📊 FUNÇÃO: Gera o HTML da Tabela de Classificação
+function gerarTabelaHTML(timesOrdenados) {
+    let linhasHTML = '';
+    
+    timesOrdenados.forEach((t, index) => {
+        // Os dois primeiros colocados ganham um destaque verde sutil
+        const classLinha = index < 2 
+            ? "bg-emerald-900/10 border-l-4 border-l-emerald-500 font-medium" 
+            : "border-l-4 border-l-transparent text-slate-400";
 
-    // MODIFICAÇÃO CRÍTICA: Bloqueia termos como W75, W16, etc. (^w\d+)
-    function ehTimeValido(nome) {
-        if (!nome) return false;
-        const n = nome.toString().trim().toLowerCase();
-        if (n.includes("/") || n.match(/^[0-9]/) || n.match(/^w\d+/) || n.includes("winner") || n.includes("vencedor") || n === "tbd" || n === "?" || n.includes("a definir")) return false;
-        return true;
+        linhasHTML += `
+            <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${classLinha}">
+                <td class="py-3 pl-3 text-center w-8">${index + 1}</td>
+                <td class="py-3 flex items-center gap-2 font-bold text-slate-200 whitespace-nowrap">
+                    <span class="text-xl">${obterEmojiBandeira(t.nome)}</span> ${traduzirNomePais(t.nome)}
+                </td>
+                <td class="py-3 text-center font-extrabold text-white">${t.pts}</td>
+                <td class="py-3 text-center text-slate-500">${t.j}</td>
+                <td class="py-3 text-center">${t.v}</td>
+                <td class="py-3 text-center">${t.e}</td>
+                <td class="py-3 text-center">${t.d}</td>
+                <td class="py-3 text-center font-semibold text-emerald-400">${t.sg}</td>
+            </tr>
+        `;
+    });
+
+    return `
+        <div class="mb-6 overflow-x-auto rounded-xl border border-slate-700/80 shadow-md">
+            <table class="w-full text-left text-sm whitespace-nowrap">
+                <thead class="bg-slate-800/80 text-slate-400 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="py-3 pl-3 text-center">Pos</th>
+                        <th class="py-3">Seleção</th>
+                        <th class="py-3 text-center w-12 text-white">Pts</th>
+                        <th class="py-3 text-center w-10">J</th>
+                        <th class="py-3 text-center w-10">V</th>
+                        <th class="py-3 text-center w-10">E</th>
+                        <th class="py-3 text-center w-10">D</th>
+                        <th class="py-3 text-center w-12">SG</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-slate-800/40 divide-y divide-slate-700/50">
+                    ${linhasHTML}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// ⚽ FUNÇÃO: Gera o card do Jogo
+function gerarCardJogoGrupo(j) {
+    let g1 = '-'; let g2 = '-';
+    if (j.score && Array.isArray(j.score.ft)) { g1 = j.score.ft[0]; g2 = j.score.ft[1]; }
+
+    const dataFormatada = j.date ? j.date.split('-').reverse().slice(0,2).join('/') : '?';
+    const horaFormatada = j.time ? j.time.replace(' BRT', '') : ''; 
+
+    let golsTime1HTML = '';
+    if (j.goals1 && j.goals1.length > 0) {
+        golsTime1HTML = j.goals1.map(g => `<div class="text-[10px] md:text-xs text-slate-400"><span class="text-emerald-400">⚽</span> ${g.name} ${g.minute}' ${g.owngoal ? '<span class="text-red-400 text-[9px] font-bold">(GC)</span>' : ''}</div>`).join('');
     }
 
-    const listaGrupos = (dadosGrupos && Array.isArray(dadosGrupos.groups)) ? dadosGrupos.groups : [];
-    listaGrupos.forEach(g => {
-        const nomeGrupo = g.name || g.title || "Grupo";
-        if (!nomeGrupo.toUpperCase().includes("GROUP") && !nomeGrupo.toUpperCase().includes("GRUPO")) return; 
+    let golsTime2HTML = '';
+    if (j.goals2 && j.goals2.length > 0) {
+        golsTime2HTML = j.goals2.map(g => `<div class="text-[10px] md:text-xs text-slate-400">${g.owngoal ? '<span class="text-red-400 text-[9px] font-bold">(GC)</span>' : ''} ${g.minute}' ${g.name} <span class="text-emerald-400">⚽</span></div>`).join('');
+    }
 
-        grupos[nomeGrupo] = { selecoes: {}, jogos: [] };
-        const times = g.teams || g.teams_string || [];
-        
-        if (Array.isArray(times)) {
-            times.forEach(t => {
-                let nomePaisOriginal = (typeof t === 'object' && t !== null) ? (t.name || t.title) : t;
-                if (ehTimeValido(nomePaisOriginal)) {
-                    let nomeTraduzido = traduzirNomePais(nomePaisOriginal);
-                    const chaveNormalizada = normalizarTexto(nomeTraduzido);
-                    grupos[nomeGrupo].selecoes[chaveNormalizada] = {
-                        nome: nomeTraduzido, pontos: 0, saldo_geral: 0, gols_geral: 0, jogos_contados: 0
-                    };
-                }
-            });
-        }
-    });
-
-    const matches = (dadosJogos && Array.isArray(dadosJogos.matches)) ? dadosJogos.matches : [];
-    matches.forEach(partida => {
-        const nomeCasaOriginal = partida.team1 || partida.home_team || (partida.team && partida.team.name);
-        const nomeForaOriginal = partida.team2 || partida.away_team;
-        
-        if (!ehTimeValido(nomeCasaOriginal) || !ehTimeValido(nomeForaOriginal)) return;
-
-        const nomeCasa = traduzirNomePais(nomeCasaOriginal);
-        const nomeFora = traduzirNomePais(nomeForaOriginal);
-
-        const chaveCasa = normalizarTexto(nomeCasa);
-        const chaveFora = normalizarTexto(nomeFora);
-
-        const grupoCasaOriginal = Object.keys(grupos).find(gNome => grupos[gNome] && grupos[gNome].selecoes[chaveCasa]);
-        const grupoForaOriginal = Object.keys(grupos).find(gNome => grupos[gNome] && grupos[gNome].selecoes[chaveFora]);
-
-        if (grupoCasaOriginal && grupoForaOriginal && grupoCasaOriginal !== grupoForaOriginal) return;
-
-        let grupoPertencente = grupoCasaOriginal || grupoForaOriginal;
-        if (!grupoPertencente && (partida.group || partida.grupo)) {
-            const pGroup = (partida.group || partida.grupo).toString().toUpperCase().trim();
-            grupoPertencente = Object.keys(grupos).find(gNome => gNome.toUpperCase().trim() === pGroup);
-        }
-
-        if (!grupoPertencente || !grupos[grupoPertencente]) return;
-
-        [ {chave: chaveCasa, nome: nomeCasa}, {chave: chaveFora, nome: nomeFora} ].forEach(obj => {
-            if (obj.chave && ehTimeValido(obj.nome) && !grupos[grupoPertencente].selecoes[obj.chave]) {
-                grupos[grupoPertencente].selecoes[obj.chave] = {
-                    nome: obj.nome, pontos: 0, saldo_geral: 0, gols_geral: 0, jogos_contados: 0
-                };
-            }
-        });
-
-        let golsCasa = null; let golsFora = null;
-        if (partida.score && Array.isArray(partida.score.ft) && partida.score.ft.length === 2) {
-            golsCasa = partida.score.ft[0]; golsFora = partida.score.ft[1];
-        } else if (partida.score1 !== undefined && partida.score1 !== null) {
-            golsCasa = partida.score1; golsFora = partida.score2;
-        }
-
-        const jogoEncerrado = golsCasa !== null && golsFora !== null && !isNaN(golsCasa) && !isNaN(golsFora);
-
-        if (jogoEncerrado) {
-            const timeCasa = grupos[grupoPertencente].selecoes[chaveCasa];
-            const timeFora = grupos[grupoPertencente].selecoes[chaveFora];
-
-            if (timeCasa && timeFora) {
-                const gc = Number(golsCasa); const gf = Number(golsFora);
-                timeCasa.gols_geral += gc; timeFora.gols_geral += gf;
-                timeCasa.jogos_contados++; timeFora.jogos_contados++;
-                timeCasa.saldo_geral += (gc - gf); timeFora.saldo_geral += (gf - gc);
-
-                if (gc > gf) { timeCasa.pontos += 3; } else if (gf > gc) { timeFora.pontos += 3; } else { timeCasa.pontos += 1; timeFora.pontos += 1; }
-                grupos[grupoPertencente].jogos.push({ casa: timeCasa.nome, fora: timeFora.nome, golsCasa: gc, golsFora: gf });
-            }
-        }
-    });
-
-    return grupos;
+    return `
+        <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/80 hover:border-emerald-500/50 transition-colors shadow-lg flex flex-col h-full w-full">
+            <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 mb-3">
+                <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Jogo #${j.num || '?'}</span>
+                <span class="text-[10px] md:text-xs text-emerald-400 font-semibold">${dataFormatada} • ${horaFormatada}</span>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex flex-col items-center w-[35%]">
+                    <span class="text-3xl mb-1">${obterEmojiBandeira(j.team1)}</span>
+                    <span class="text-[10px] font-bold text-slate-300 text-center uppercase tracking-wide leading-tight">${traduzirNomePais(j.team1)}</span>
+                </div>
+                <div class="flex flex-col items-center justify-center w-[30%]">
+                    <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+                        <span class="text-lg font-black text-white">${g1} - ${g2}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center w-[35%]">
+                    <span class="text-3xl mb-1">${obterEmojiBandeira(j.team2)}</span>
+                    <span class="text-[10px] font-bold text-slate-300 text-center uppercase tracking-wide leading-tight">${traduzirNomePais(j.team2)}</span>
+                </div>
+            </div>
+            ${(golsTime1HTML || golsTime2HTML) ? `
+                <div class="flex justify-between mt-auto pt-2 border-t border-slate-700/30">
+                    <div class="flex flex-col w-1/2 pr-2 border-r border-slate-700/30 text-left gap-0.5">${golsTime1HTML}</div>
+                    <div class="flex flex-col w-1/2 pl-2 text-right items-end gap-0.5">${golsTime2HTML}</div>
+                </div>
+            ` : ''}
+        </div>
+    `;
 }
 
-function ordenarSelecoesDoGrupo(selecoesArray, jogosDoGrupo) {
-    selecoesArray.sort((a, b) => {
-        if (b.pontos !== a.pontos) return b.pontos - a.pontos;
-        const jogoDireto = jogosDoGrupo.find(j => (j.casa === a.nome && j.fora === b.nome) || (j.casa === b.nome && j.fora === a.nome));
-        
-        if (jogoDireto) {
-            let ptsA = 0, ptsB = 0, gpA = 0, gpB = 0;
-            if (jogoDireto.casa === a.nome) { gpA = jogoDireto.golsCasa; gpB = jogoDireto.golsFora; } 
-            else { gpA = jogoDireto.golsFora; gpB = jogoDireto.golsCasa; }
-            let sgA = gpA - gpB; let sgB = gpB - gpA;
-            if (gpA > gpB) ptsA = 3; else if (gpB > gpA) ptsB = 3; else { ptsA = 1; ptsB = 1; }
-
-            if (ptsB !== ptsA) return ptsB - ptsA;
-            if (sgB !== sgA) return sgB - sgA;
-            if (gpB !== gpA) return gpB - gpA;
-        }
-
-        if (b.saldo_geral !== a.saldo_geral) return b.saldo_geral - a.saldo_geral;
-        if (b.gols_geral !== a.gols_geral) return b.gols_geral - a.gols_geral;
-
-        const fpA = calcularPontosFairPlay(a.nome); const fpB = calcularPontosFairPlay(b.nome);
-        if (fpB !== fpA) return fpB - fpA;
-        return 0;
-    });
-}
-
-function obterMelhoresTerceiros(gruposProcessados) {
-    const todosOsTerceiros = [];
-    Object.keys(gruposProcessados).forEach(grupoNome => {
-        const selecoesArray = Object.values(gruposProcessados[grupoNome].selecoes);
-        const jogosDoGrupo = gruposProcessados[grupoNome].jogos;
-        if (selecoesArray.length < 3) return;
-        ordenarSelecoesDoGrupo(selecoesArray, jogosDoGrupo);
-        if (selecoesArray[2]) todosOsTerceiros.push({ ...selecoesArray[2], jogosDoSeuGrupo: jogosDoGrupo });
-    });
-
-    todosOsTerceiros.sort((a, b) => {
-        if (b.pontos !== a.pontos) return b.pontos - a.pontos;
-        if (b.saldo_geral !== a.saldo_geral) return b.saldo_geral - a.saldo_geral;
-        if (b.gols_geral !== a.gols_geral) return b.gols_geral - a.gols_geral;
-
-        const jogoDireto = a.jogosDoSeuGrupo.find(j => (j.casa === a.nome && j.fora === b.nome) || (j.casa === b.nome && j.fora === a.nome));
-        if (jogoDireto) {
-            let ptsA = 0, ptsB = 0, gpA = 0, gpB = 0;
-            if (jogoDireto.casa === a.nome) { gpA = jogoDireto.golsCasa; gpB = jogoDireto.golsFora; } 
-            else { gpA = lookup; gpA = jogoDireto.golsFora; gpB = jogoDireto.golsCasa; }
-            let sgA = gpA - gpB; let sgB = gpB - gpA;
-            if (gpA > gpB) ptsA = 3; else if (gpB > gpA) ptsB = 3; else { ptsA = 1; ptsB = 1; }
-            if (ptsB !== ptsA) return ptsB - ptsA;
-            if (sgB !== sgA) return sgB - sgA;
-            if (gpB !== gpA) return gpB - gpA;
-        }
-
-        const fpA = calcularPontosFairPlay(a.nome); const fpB = calcularPontosFairPlay(b.nome);
-        if (fpB !== fpA) return fpB - fpA;
-        return 0;
-    });
-    return todosOsTerceiros.slice(0, 8).map(time => time.nome);
-}
-
-function renderizarGrupos(gruposProcessados, container, melhoresTerceirosNomes) {
-    container.innerHTML = '';
-    Object.keys(gruposProcessados).forEach(grupoNome => {
-        const selecoesArray = Object.values(gruposProcessados[grupoNome].selecoes);
-        const jogosDoGrupo = gruposProcessados[grupoNome].jogos;
-        if (selecoesArray.length === 0) return;
-
-        ordenarSelecoesDoGrupo(selecoesArray, jogosDoGrupo);
-
-        let tabelaHTML = `<div class="bg-slate-800 rounded-lg p-4 border border-slate-700 shadow-lg">
-            <h2 class="text-xl font-bold mb-3 text-emerald-300">${grupoNome}</h2>
-            <table class="w-full text-left text-sm">
-                <thead><tr class="text-slate-400 text-xs uppercase border-b border-slate-700"><th class="py-2">Pos</th><th>País</th><th class="text-center">P</th><th class="text-center">SG</th><th class="text-center">GP</th></tr></thead>
-                <tbody>`;
-
-        selecoesArray.forEach((time, index) => {
-            const ehTop2 = index < 2; const ehMelhorTerceiro = index === 2 && melhoresTerceirosNomes.includes(time.nome);
-            let estiloLinha = ehTop2 ? 'bg-emerald-950/30 text-emerald-200 font-semibold' : (ehMelhorTerceiro ? 'bg-yellow-500/20 text-yellow-200 font-bold' : 'text-slate-400');
-            const emojiBandeira = obterEmojiBandeira(time.nome);
-
-            tabelaHTML += `<tr class="${estiloLinha} border-b border-slate-700/40 hover:bg-slate-700/10 transition-colors">
-                <td class="py-2.5 pl-1">${index + 1}</td>
-                <td class="whitespace-nowrap"><span class="text-base mr-1.5 align-middle">${emojiBandeira}</span><span class="align-middle">${time.nome}</span> ${ehMelhorTerceiro ? '<span class="text-[10px] bg-yellow-500/30 text-yellow-300 px-1 rounded ml-1 align-middle font-normal">Repescagem</span>' : ''}</td>
-                <td class="text-center font-bold text-white align-middle">${time.pontos}</td>
-                <td class="text-center align-middle">${time.saldo_geral > 0 ? '+' + time.saldo_geral : time.saldo_geral}</td>
-                <td class="text-center align-middle">${time.gols_geral}</td>
-            </tr>`;
-        });
-        tabelaHTML += `</tbody></table></div>`;
-        container.innerHTML += tabelaHTML;
-    });
-}
-
-async function carregarSiteCopa() {
+// 🚀 FUNÇÃO PRINCIPAL
+function renderizarFaseGrupos(matches) {
     const container = document.getElementById('grupos-container');
-    try {
-        const [resGrupos, resJogos] = await Promise.all([fetch(URL_GRUPOS), fetch(URL_JOGOS)]);
-        if (resGrupos.ok && resJogos.ok) {
-            const dadosGrupos = await resGrupos.json(); const dadosJogos = await resJogos.json();
-            const gruposProcessados = cruzarDados(dadosGrupos, dadosJogos);
-            const melhoresTerceirosNomes = obterMelhoresTerceiros(gruposProcessados);
-            renderizarGrupos(gruposProcessados, container, melhoresTerceirosNomes);
-        } else { container.innerHTML = '<p class="text-red-400 text-center col-span-full">Erro na API.</p>'; }
-    } catch (e) {
-        console.error("Erro no processamento:", e);
-        container.innerHTML = '<p class="text-red-400 text-center col-span-full">Erro crítico no script.</p>';
+    container.innerHTML = '';
+
+    const jogosGrupos = matches.filter(j => j.group);
+    const gruposAgrupados = {};
+    jogosGrupos.forEach(j => {
+        const nomeGrupo = j.group;
+        if (!gruposAgrupados[nomeGrupo]) gruposAgrupados[nomeGrupo] = [];
+        gruposAgrupados[nomeGrupo].push(j);
+    });
+
+    for (const [nomeGrupo, jogos] of Object.entries(gruposAgrupados)) {
+        const tituloGrupo = nomeGrupo.replace('Group', 'Grupo').trim();
+        
+        // 1. Calcula a tabela para este grupo específico
+        const timesOrdenados = calcularClassificacao(jogos);
+        
+        // 2. Cria o HTML do grupo com a Tabela + Os Jogos
+        let htmlGrupo = `
+            <div class="mb-14 bg-slate-900/30 p-4 md:p-6 rounded-2xl border border-slate-800/60 shadow-xl">
+                <h2 class="text-2xl font-black text-emerald-400 mb-6 flex items-center gap-2">
+                    <span>📊</span> ${tituloGrupo}
+                </h2>
+                
+                ${gerarTabelaHTML(timesOrdenados)}
+                
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 mt-8 border-b border-slate-800 pb-2">Jogos do Grupo</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        `;
+
+        jogos.forEach(jogo => { htmlGrupo += gerarCardJogoGrupo(jogo); });
+
+        htmlGrupo += `</div></div>`;
+        container.innerHTML += htmlGrupo;
     }
 }
-carregarSiteCopa();
+
+async function carregarFaseGrupos() {
+    try {
+        const res = await fetch(URL_JOGOS);
+        if (res.ok) {
+            const dados = await res.json();
+            if (dados.matches && Array.isArray(dados.matches)) {
+                renderizarFaseGrupos(dados.matches);
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+carregarFaseGrupos();
