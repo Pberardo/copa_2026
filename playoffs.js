@@ -315,24 +315,33 @@ function renderizarListaDeJogos(fases) {
 
             // 🧠 NOVA LÓGICA: Agrupamento de gols por jogador
             const formatarGols = (golsArr) => {
-                if (!golsArr || !Array.isArray(golsArr) || golsArr.length === 0) return '';
+    if (!golsArr || !Array.isArray(golsArr) || golsArr.length === 0) return '';
+    
+    const golsAgrupados = {};
+    
+    golsArr.forEach(g => {
+        const nomeJogador = g.name || "Desconhecido";
+        if (!golsAgrupados[nomeJogador]) {
+            golsAgrupados[nomeJogador] = [];
+        }
+        
+        // 🔴 MUDANÇA AQUI: Inserimos o HTML com as classes de cor vermelha no GC
+        const infoExtra = g.penalty 
+            ? ' (P)' 
+            : g.owngoal 
+                ? ' <span class="text-red-400 text-[10px] font-black">(GC)</span>' 
+                : '';
                 
-                const golsAgrupados = {};
-                
-                golsArr.forEach(g => {
-                    const nomeJogador = g.name || "Desconhecido";
-                    if (!golsAgrupados[nomeJogador]) {
-                        golsAgrupados[nomeJogador] = [];
-                    }
-                    const infoExtra = g.penalty ? ' (P)' : g.owngoal ? ' (GC)' : '';
-                    golsAgrupados[nomeJogador].push(`${g.minute}'${infoExtra}`);
-                });
+        golsAgrupados[nomeJogador].push(`${g.minute}'${infoExtra}`);
+    });
 
-                return Object.keys(golsAgrupados).map(nome => {
-                    const minutosFormatados = golsAgrupados[nome].join(', ');
-                    return `<div class="truncate" title="${nome}">⚽ ${nome} <span class="font-bold text-slate-300">${minutosFormatados}</span></div>`;
-                }).join('');
-            };
+    return Object.keys(golsAgrupados).map(nome => {
+        const minutosFormatados = golsAgrupados[nome].join(', ');
+        return `<div class="truncate" title="${nome}">
+                    <span class="text-emerald-400">⚽</span> ${nome} <span class="font-bold text-slate-300">${minutosFormatados}</span>
+                </div>`;
+    }).join('');
+};
 
             const listaGolsCasa = formatarGols(j.goals1);
             const listaGolsFora = formatarGols(j.goals2);
