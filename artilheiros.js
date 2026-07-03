@@ -119,6 +119,7 @@ function renderizarTopArtilheiros(matches) {
                 : 'text-slate-300 border-b border-slate-700/40 hover:bg-slate-700/30 transition-colors';
 
             const coroa = index === 0 ? '<span class="mr-2 text-lg drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]">👑</span>' : '';
+           
             const posicao = index === 0 ? '1º' : `${index + 1}º`;
 
             tabelaHTML += `
@@ -127,7 +128,7 @@ function renderizarTopArtilheiros(matches) {
                         ${posicao}
                     </td>
                     <td class="py-4 font-bold flex items-center">
-                        ${coroa} ${jogador.nome}
+                        <!--${coroa}--> ${jogador.nome}
                     </td>
                     <td class="py-4">
                         <span class="text-lg mr-2 align-middle">${emojiBandeira}</span>
