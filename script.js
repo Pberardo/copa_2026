@@ -89,27 +89,45 @@ function calcularClassificacao(jogosGrupo) {
 }
 
 // 📊 FUNÇÃO: Gera o HTML da Tabela de Classificação
-function gerarTabelaHTML(timesOrdenados) {
+function gerarTabelaHTML(timesOrdenados, melhoresTerceiros) {
     let linhasHTML = '';
     
     timesOrdenados.forEach((t, index) => {
-        // Os dois primeiros colocados ganham um destaque verde sutil
-        const classLinha = index < 2 
-            ? "bg-emerald-900/10 border-l-4 border-l-emerald-500 font-medium" 
-            : "border-l-4 border-l-transparent text-slate-400";
+        let corFundo = "bg-transparent";
+        let corBorda = "border-transparent";
+        let corPosicao = "text-slate-500";
+        
+        // 🎨 Lógica de Cores da Classificação
+        if (index < 2) {
+            // Top 2: Verde (Classificados direto)
+            corFundo = "bg-emerald-900/10";
+            corBorda = "border-emerald-500";
+            corPosicao = "text-emerald-400 font-bold";
+        } else if (index === 2 && melhoresTerceiros.has(t.nome)) {
+            // Melhores 3º Colocados: Amarelo (Repescagem)
+            corFundo = "bg-yellow-900/10";
+            corBorda = "border-yellow-500";
+            corPosicao = "text-yellow-500 font-bold";
+        }
 
+        // Criamos uma div interna para a borda lateral. Isso impede que a tabela HTML "engula" a borda!
         linhasHTML += `
-            <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${classLinha}">
-                <td class="py-3 pl-3 text-center w-8">${index + 1}</td>
-                <td class="py-3 flex items-center gap-2 font-bold text-slate-200 whitespace-nowrap">
+            <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${corFundo}">
+                <td class="py-2 pl-0 w-12">
+                    <div class="flex items-center">
+                        <div class="h-8 w-1 border-l-4 ${corBorda} mr-3 rounded-r-md"></div>
+                        <span class="w-full text-center text-xs ${corPosicao}">${index + 1}</span>
+                    </div>
+                </td>
+                <td class="py-3 flex items-center gap-2 font-bold whitespace-nowrap text-slate-200">
                     <span class="text-xl">${obterEmojiBandeira(t.nome)}</span> ${traduzirNomePais(t.nome)}
                 </td>
                 <td class="py-3 text-center font-extrabold text-white">${t.pts}</td>
-                <td class="py-3 text-center text-slate-500">${t.j}</td>
-                <td class="py-3 text-center">${t.v}</td>
-                <td class="py-3 text-center">${t.e}</td>
-                <td class="py-3 text-center">${t.d}</td>
-                <td class="py-3 text-center font-semibold text-emerald-400">${t.sg}</td>
+                <td class="py-3 text-center text-slate-400">${t.j}</td>
+                <td class="py-3 text-center text-slate-400">${t.v}</td>
+                <td class="py-3 text-center text-slate-400">${t.e}</td>
+                <td class="py-3 text-center text-slate-400">${t.d}</td>
+                <td class="py-3 text-center font-semibold text-slate-300">${t.sg}</td>
             </tr>
         `;
     });
@@ -119,7 +137,7 @@ function gerarTabelaHTML(timesOrdenados) {
             <table class="w-full text-left text-sm whitespace-nowrap">
                 <thead class="bg-slate-800/80 text-slate-400 text-xs uppercase tracking-wider">
                     <tr>
-                        <th class="py-3 pl-3 text-center">Pos</th>
+                        <th class="py-3 pl-0 w-12 text-center">Pos</th>
                         <th class="py-3">Seleção</th>
                         <th class="py-3 text-center w-12 text-white">Pts</th>
                         <th class="py-3 text-center w-10">J</th>
@@ -142,8 +160,33 @@ function gerarCardJogoGrupo(j) {
     let g1 = '-'; let g2 = '-';
     if (j.score && Array.isArray(j.score.ft)) { g1 = j.score.ft[0]; g2 = j.score.ft[1]; }
 
+    // 📅 Formata a Data
     const dataFormatada = j.date ? j.date.split('-').reverse().slice(0,2).join('/') : '?';
-    const horaFormatada = j.time ? j.time.replace(' BRT', '') : ''; 
+    
+    // ⏰ Lógica de Conversão para BRT (Assumindo que a API envia em UTC)
+    let horaFormatada = '?';
+    if (j.time) {
+        // Limpa o texto original para garantir que pegamos apenas os números
+        let horaLimpa = j.time.replace(/ BRT| UTC| GMT/gi, '').trim();
+        
+        let partes = horaLimpa.split(':');
+        if (partes.length >= 2) {
+            let horas = parseInt(partes[0], 10);
+            let minutos = partes[1].substring(0,2);
+            
+            // Subtrai 3 horas (Fuso de Brasília em relação ao UTC)
+            // Se o seu JSON JÁ ESTIVER em horário de Brasília, apague a linha do '- 3'
+            horas = horas - 3; 
+            
+            // Corrige se a subtração der negativo (ex: 02:00 UTC vira 23:00 do dia anterior)
+            if (horas < 0) horas += 24;
+            
+            // Monta a string no formato 00:00 BRT
+            horaFormatada = `${horas.toString().padStart(2, '0')}:${minutos} BRT`;
+        } else {
+            horaFormatada = `${horaLimpa} BRT`;
+        }
+    }
 
     let golsTime1HTML = '';
     if (j.goals1 && j.goals1.length > 0) {
@@ -159,7 +202,8 @@ function gerarCardJogoGrupo(j) {
         <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/80 hover:border-emerald-500/50 transition-colors shadow-lg flex flex-col h-full w-full">
             <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 mb-3">
                 <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Jogo #${j.num || '?'}</span>
-                <span class="text-[10px] md:text-xs text-emerald-400 font-semibold">${dataFormatada} • ${horaFormatada}</span>
+                <!-- Horário BRT em Destaque -->
+                <span class="text-[10px] md:text-xs text-emerald-400 font-bold bg-emerald-900/20 px-2 py-0.5 rounded">${dataFormatada} • ${horaFormatada}</span>
             </div>
             <div class="flex justify-between items-center mb-3">
                 <div class="flex flex-col items-center w-[35%]">
@@ -199,20 +243,56 @@ function renderizarFaseGrupos(matches) {
         gruposAgrupados[nomeGrupo].push(j);
     });
 
+    const classificacaoGeral = {};
+    const listaTerceiros = [];
+
+    for (const [nomeGrupo, jogos] of Object.entries(gruposAgrupados)) {
+        const timesOrdenados = calcularClassificacao(jogos);
+        classificacaoGeral[nomeGrupo] = timesOrdenados;
+        
+        if (timesOrdenados.length > 2) {
+            listaTerceiros.push(timesOrdenados[2]);
+        }
+    }
+
+    listaTerceiros.sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (b.sg !== a.sg) return b.sg - a.sg;
+        return b.gf - a.gf;
+    });
+
+    const melhoresTerceiros = new Set(listaTerceiros.slice(0, 8).map(t => t.nome));
+
+    // 🎨 MUDANÇA AQUI: Inserindo a Legenda no topo do container
+    const legendaHTML = `
+        <div class="max-w-3xl mx-auto flex flex-wrap justify-center gap-6 md:gap-10 mb-12 bg-slate-900/50 p-4 rounded-xl border border-slate-800/60 shadow-sm text-xs md:text-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-emerald-900/30 border-l-4 border-emerald-500 rounded-sm"></div>
+                <span class="text-slate-300 font-medium">Classificados (1º e 2º)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-yellow-900/30 border-l-4 border-yellow-500 rounded-sm"></div>
+                <span class="text-slate-300 font-medium">Classificados (Melhores 3º)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-slate-800/40 border-l-4 border-transparent rounded-sm"></div>
+                <span class="text-slate-500 font-medium">Eliminados</span>
+            </div>
+        </div>
+    `;
+    container.innerHTML = legendaHTML;
+
     for (const [nomeGrupo, jogos] of Object.entries(gruposAgrupados)) {
         const tituloGrupo = nomeGrupo.replace('Group', 'Grupo').trim();
+        const timesOrdenados = classificacaoGeral[nomeGrupo];
         
-        // 1. Calcula a tabela para este grupo específico
-        const timesOrdenados = calcularClassificacao(jogos);
-        
-        // 2. Cria o HTML do grupo com a Tabela + Os Jogos
         let htmlGrupo = `
             <div class="mb-14 bg-slate-900/30 p-4 md:p-6 rounded-2xl border border-slate-800/60 shadow-xl">
                 <h2 class="text-2xl font-black text-emerald-400 mb-6 flex items-center gap-2">
                     <span>📊</span> ${tituloGrupo}
                 </h2>
                 
-                ${gerarTabelaHTML(timesOrdenados)}
+                ${gerarTabelaHTML(timesOrdenados, melhoresTerceiros)}
                 
                 <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 mt-8 border-b border-slate-800 pb-2">Jogos do Grupo</h3>
                 
