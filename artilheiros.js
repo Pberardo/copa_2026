@@ -85,6 +85,7 @@ function renderizarTopArtilheiros(matches) {
         <div class="bg-slate-800/80 rounded-xl p-5 md:p-8 border border-slate-700/60 shadow-2xl">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
                 <div class="flex items-center gap-3">
+                   <img src="chuteira.png" alt="Chuteira" style="width: 90px; height: 100px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.5));">
                     <div>
                         <h2 class="text-xl md:text-2xl font-black text-emerald-400 uppercase tracking-widest">Chuteira de Ouro</h2>
                         <p class="text-xs text-slate-400">Top 10 Artilheiros do Torneio</p>
