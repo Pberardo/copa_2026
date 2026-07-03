@@ -1043,6 +1043,10 @@
     "team1": "Switzerland",
     "team2": "Algeria",
     "score": {"ft": [2, 0], "ht": [1, 0]},
+    "goals1": 
+     [{"name": "Breel Embolo", "minute": "10"},
+      {"name": "Dan Ndoye", "minute": "46"}],
+    "goals2": [],
     "ground": "Vancouver"},
    {"round": "Round of 16",
     "num": 89,
