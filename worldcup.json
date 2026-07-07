@@ -1147,8 +1147,7 @@
     "score": {"ft": [2, 3], "ht": [1, 0]},
     "goals1": 
      [{"name": "Yasser Ibrahim", "minute": "15"},
-      {"name": "Mostafa Zico", "minute": "67"}]
-      ],
+      {"name": "Mostafa Zico", "minute": "67"}],
     "goals2": 
      [{"name": "Cristian Romero", "minute": "79"},
       {"name": "Lionel Messi", "minute": "83"},
